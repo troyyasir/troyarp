@@ -3,28 +3,23 @@ import { MapPin, Star, Quote, Wine, Utensils, Wifi, Car, ChefHat, Salad, Phone, 
 
 function App() {
   const [isReservationExpanded, setIsReservationExpanded] = useState(false);
-  const [isMenuDropdownOpen, setIsMenuDropdownOpen] = useState(false);
   const reservationRef = useRef<HTMLDivElement>(null);
-  const menuDropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (reservationRef.current && !reservationRef.current.contains(event.target as Node)) {
         setIsReservationExpanded(false);
       }
-      if (menuDropdownRef.current && !menuDropdownRef.current.contains(event.target as Node)) {
-        setIsMenuDropdownOpen(false);
-      }
     };
 
-    if (isReservationExpanded || isMenuDropdownOpen) {
+    if (isReservationExpanded) {
       document.addEventListener('mousedown', handleClickOutside);
     }
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isReservationExpanded, isMenuDropdownOpen]);
+  }, [isReservationExpanded]);
 
   const menuHighlights = [
     {
@@ -98,6 +93,7 @@ function App() {
                     >
                       <MapPin className="w-6 min-w-[24px] group-hover:scale-110 transition-transform" />
                       <span className="group-hover:underline">2125 Fillmore Street</span>
+                      <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                       <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-white/10 backdrop-blur-md px-2 py-1 
                         rounded text-sm opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none 
                         border border-white/20 whitespace-nowrap">
@@ -113,6 +109,7 @@ function App() {
                     >
                       <Phone className="w-6 min-w-[24px] group-hover:scale-110 transition-transform" />
                       <span className="group-hover:underline">(415) 968-0696</span>
+                      <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                       <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-white/10 backdrop-blur-md px-2 py-1 
                         rounded text-sm opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none 
                         border border-white/20 whitespace-nowrap">
@@ -168,60 +165,15 @@ function App() {
             <div className="mb-8">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-semibold">Menu Highlights</h2>
-                <div className="relative" ref={menuDropdownRef}>
-                  <button
-                    onClick={() => setIsMenuDropdownOpen(!isMenuDropdownOpen)}
-                    className="text-accent hover:text-accent/80 flex items-center gap-1 transition-colors group"
-                  >
-                    View Full Menu
-                    <ChevronDown className={`w-4 transition-transform ${isMenuDropdownOpen ? 'rotate-180' : ''}`} />
-                  </button>
-                  
-                  {isMenuDropdownOpen && (
-                    <div className="absolute right-0 mt-2 w-48 rounded-lg bg-white/10 backdrop-blur-md border border-white/20 shadow-lg overflow-hidden z-50">
-                      <a 
-                        href="https://www.troyasf.com/lunch" 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="block px-4 py-2 text-sm hover:bg-white/10 transition-colors"
-                      >
-                        Lunch Menu
-                      </a>
-                      <a 
-                        href="https://www.troyasf.com/menus" 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="block px-4 py-2 text-sm hover:bg-white/10 transition-colors"
-                      >
-                        Dinner Menu
-                      </a>
-                      <a 
-                        href="https://www.troyasf.com/menus" 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="block px-4 py-2 text-sm hover:bg-white/10 transition-colors"
-                      >
-                        Brunch Menu
-                      </a>
-                      <a 
-                        href="https://www.troyasf.com/menus" 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="block px-4 py-2 text-sm hover:bg-white/10 transition-colors"
-                      >
-                        Dessert Menu
-                      </a>
-                      <a 
-                        href="https://www.troyasf.com/wine-list" 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="block px-4 py-2 text-sm hover:bg-white/10 transition-colors"
-                      >
-                        Wine List
-                      </a>
-                    </div>
-                  )}
-                </div>
+                <a 
+                  href="https://www.troyasf.com/menus"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-accent hover:text-accent/80 flex items-center gap-1 transition-colors group"
+                >
+                  View Full Menu
+                  <ArrowUpRight className="w-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                </a>
               </div>
               <div className="grid gap-4">
                 {menuHighlights.map((item) => (
