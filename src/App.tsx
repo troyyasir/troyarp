@@ -31,13 +31,13 @@ function App() {
     {
       id: 2,
       name: "Moussaka",
-      description: "Layered eggplant, seasoned ground lamb, and béchamel sauce",
+      description: "Layered eggplant, with a creamy sauce",
       image: "./Images/3.jpg"
     },
     {
       id: 3,
-      name: "Seafood Güveç",
-      description: "Fresh seafood medley with prawns and fish in a clay pot with aromatic Mediterranean herbs and tomato sauce",
+      name: "Vegetarian Feast",
+      description: "Tzatkizi, Hummus, Muhammara, Falafel, Tomato and Cucumber with Pita",
       image: "./Images/4.jpg"
     }
   ];
@@ -54,7 +54,7 @@ function App() {
               className="object-cover w-full h-full"
             />
             <img 
-              src="./Images/6.jpg" 
+              src="./Images/8.jpg" 
               alt="Restaurant service"
               className="object-cover w-full h-full"
             />
