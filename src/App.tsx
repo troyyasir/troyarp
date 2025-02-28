@@ -3,23 +3,28 @@ import { MapPin, Star, Quote, Wine, Utensils, Wifi, Car, ChefHat, Salad, Phone, 
 
 function App() {
   const [isReservationExpanded, setIsReservationExpanded] = useState(false);
+  const [isMenuDropdownOpen, setIsMenuDropdownOpen] = useState(false);
   const reservationRef = useRef<HTMLDivElement>(null);
+  const menuDropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (reservationRef.current && !reservationRef.current.contains(event.target as Node)) {
         setIsReservationExpanded(false);
       }
+      if (menuDropdownRef.current && !menuDropdownRef.current.contains(event.target as Node)) {
+        setIsMenuDropdownOpen(false);
+      }
     };
 
-    if (isReservationExpanded) {
+    if (isReservationExpanded || isMenuDropdownOpen) {
       document.addEventListener('mousedown', handleClickOutside);
     }
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isReservationExpanded]);
+  }, [isReservationExpanded, isMenuDropdownOpen]);
 
   const menuHighlights = [
     {
@@ -165,15 +170,61 @@ function App() {
             <div className="mb-8">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-semibold">Menu Highlights</h2>
-                <a 
-                  href="https://www.troyasf.com/menus"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-accent hover:text-accent/80 flex items-center gap-1 transition-colors group"
-                >
-                  View Full Menu
-                  <ArrowUpRight className="w-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                </a>
+                <div ref={menuDropdownRef} className="relative">
+                  <button
+                    onClick={() => setIsMenuDropdownOpen(!isMenuDropdownOpen)}
+                    className="text-accent hover:text-accent/80 flex items-center gap-1 transition-colors group relative"
+                  >
+                    View Full Menu
+                    <ChevronDown className={`w-4 transition-transform ${isMenuDropdownOpen ? 'rotate-180' : ''}`} />
+                  </button>
+                  {isMenuDropdownOpen && (
+                    <div className="absolute right-0 mt-2 w-48 rounded-lg bg-white/10 backdrop-blur-md border border-white/20 shadow-lg overflow-hidden">
+                      <div className="py-1">
+                        <a
+                          href="https://www.troyasf.com/lunch"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-white/10 transition-colors"
+                        >
+                          Lunch Menu
+                        </a>
+                        <a
+                          href="https://www.troyasf.com/menus"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-white/10 transition-colors"
+                        >
+                          Dinner Menu
+                        </a>
+                        <a
+                          href="https://www.troyasf.com/brunch"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-white/10 transition-colors"
+                        >
+                          Brunch Menu
+                        </a>
+                        <a
+                          href="https://www.troyasf.com/desert"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-white/10 transition-colors"
+                        >
+                          Dessert Menu
+                        </a>
+                        <a
+                          href="https://www.troyasf.com/wine-list"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-white/10 transition-colors"
+                        >
+                          Wine List
+                        </a>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
               <div className="grid gap-4">
                 {menuHighlights.map((item) => (
