@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { MapPin, Star, Quote, Wine, Utensils, Wifi, Car, ChefHat, Salad, Phone, ChevronDown, Filter, ChevronUp, ArrowUpRight, X } from 'lucide-react';
+import { MapPin, Star, Quote, Wine, Utensils, Wifi, Car, ChefHat, Salad, Phone, ChevronDown, Filter, ChevronUp, ArrowUpRight, X, ChevronRight } from 'lucide-react';
 
 // Menu data
 const menuData = {
@@ -251,6 +251,9 @@ const menuData = {
   ]
 };
 
+// Types
+type MenuType = 'lunch' | 'dinner' | 'brunch' | 'dessert' | 'wine';
+
 interface MenuItem {
   name: string;
   description?: string;
@@ -261,17 +264,148 @@ interface MenuItem {
 interface MenuSection {
   category: string;
   items: MenuItem[];
+  note?: string;
 }
 
 interface MenuModalProps {
   isOpen: boolean;
   onClose: () => void;
-  title: string;
   menuItems: MenuSection[];
 }
 
 // Modal Component
-const MenuModal: React.FC<MenuModalProps> = ({ isOpen, onClose, title, menuItems }) => {
+const MenuModal: React.FC<MenuModalProps> = ({ isOpen, onClose, menuItems }) => {
+  const [activeSection, setActiveSection] = useState<string>(menuItems[0]?.category || '');
+  const sectionRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
+  const navRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const lastScrollTop = useRef(0);
+  const scrollTimeout = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (isOpen) {
+      // Initialize refs for each section
+      menuItems.forEach((section) => {
+        if (!sectionRefs.current[section.category]) {
+          sectionRefs.current[section.category] = null;
+        }
+      });
+
+      // Reset scroll position when modal opens
+      if (contentRef.current) {
+        contentRef.current.scrollTop = 0;
+      }
+      // Set initial active section
+      setActiveSection(menuItems[0]?.category || '');
+    }
+  }, [isOpen, menuItems]);
+
+  // Handle scroll events with debounce
+  useEffect(() => {
+    if (!isOpen || !contentRef.current) return;
+
+    const container = contentRef.current;
+    const handleScroll = () => {
+      if (scrollTimeout.current) {
+        window.clearTimeout(scrollTimeout.current);
+      }
+
+      scrollTimeout.current = window.setTimeout(() => {
+        const scrollTop = container.scrollTop;
+        const containerHeight = container.clientHeight;
+        const headerOffset = 120; // Increased offset to account for both headers
+
+        let maxVisibleSection = {
+          id: activeSection,
+          visibleHeight: 0,
+          distance: Infinity
+        };
+
+        Object.entries(sectionRefs.current).forEach(([category, element]) => {
+          if (!element) return;
+
+          const rect = element.getBoundingClientRect();
+          const containerRect = container.getBoundingClientRect();
+          const topOffset = rect.top - containerRect.top;
+          
+          // Calculate how much of the section is visible
+          const visibleHeight = Math.min(
+            rect.height,
+            Math.max(0, containerHeight - Math.max(0, topOffset - headerOffset))
+          );
+
+          // Calculate distance from the top of the viewport (accounting for header)
+          const distance = Math.abs(topOffset - headerOffset);
+
+          // Prioritize sections that are closer to the top and more visible
+          if (visibleHeight > 0 && (
+            distance < maxVisibleSection.distance || 
+            (distance === maxVisibleSection.distance && visibleHeight > maxVisibleSection.visibleHeight)
+          )) {
+            maxVisibleSection = {
+              id: category,
+              visibleHeight: visibleHeight,
+              distance: distance
+            };
+          }
+        });
+
+        if (maxVisibleSection.id !== activeSection) {
+          setActiveSection(maxVisibleSection.id);
+          // Center the active button in the navigation
+          if (navRef.current) {
+            const button = navRef.current.querySelector(`[data-category="${maxVisibleSection.id}"]`) as HTMLButtonElement;
+            if (button) {
+              const container = navRef.current;
+              const scrollLeft = button.offsetLeft - (container.offsetWidth / 2) + (button.offsetWidth / 2);
+              container.scrollTo({ left: scrollLeft, behavior: 'smooth' });
+            }
+          }
+        }
+
+        lastScrollTop.current = scrollTop;
+      }, 50); // Small delay to debounce scroll events
+    };
+
+    container.addEventListener('scroll', handleScroll, { passive: true });
+    
+    // Initial check for active section
+    handleScroll();
+
+    return () => {
+      container.removeEventListener('scroll', handleScroll);
+      if (scrollTimeout.current) {
+        window.clearTimeout(scrollTimeout.current);
+      }
+    };
+  }, [isOpen, activeSection]);
+
+  const scrollToSection = (category: string) => {
+    const element = sectionRefs.current[category];
+    if (element && contentRef.current) {
+      const containerTop = contentRef.current.getBoundingClientRect().top;
+      const elementTop = element.getBoundingClientRect().top;
+      const headerOffset = 120; // Match the offset used in scroll handling
+      
+      contentRef.current.scrollTo({
+        top: contentRef.current.scrollTop + (elementTop - containerTop - headerOffset),
+        behavior: 'smooth'
+      });
+      
+      setActiveSection(category);
+
+      // Scroll navigation to center the active button
+      if (navRef.current) {
+        const button = navRef.current.querySelector(`[data-category="${category}"]`) as HTMLButtonElement;
+        if (button) {
+          const container = navRef.current;
+          const scrollLeft = button.offsetLeft - (container.offsetWidth / 2) + (button.offsetWidth / 2);
+          container.scrollTo({ left: scrollLeft, behavior: 'smooth' });
+        }
+      }
+    }
+  };
+
   if (!isOpen) return null;
 
   const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -285,55 +419,168 @@ const MenuModal: React.FC<MenuModalProps> = ({ isOpen, onClose, title, menuItems
       className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
       onClick={handleOverlayClick}
     >
-      <div className="bg-primary w-full max-w-3xl max-h-[80vh] overflow-y-auto rounded-xl border border-white/20">
-        <div className="sticky top-0 bg-primary/80 backdrop-blur-xl border-b border-white/20 p-4 flex items-center justify-between">
-          <h2 className="text-2xl font-semibold">{title}</h2>
-          <button 
-            onClick={onClose}
-            className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+      <div className="bg-primary w-full max-w-3xl max-h-[90vh] overflow-hidden rounded-xl border border-white/20 flex flex-col">
+        <div className="sticky top-0 z-10">
+          <div className="bg-primary/80 backdrop-blur-xl border-b border-white/20 p-4 flex items-center justify-between">
+            <h2 className="text-2xl font-semibold">Our Menu</h2>
+            <button 
+              onClick={onClose}
+              className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+            >
+              <X className="w-6 h-6" />
+            </button>
+          </div>
+          <div 
+            ref={navRef}
+            className="bg-primary/60 backdrop-blur-xl border-b border-white/20 overflow-x-auto scrollbar-hide"
           >
-            <X className="w-6 h-6" />
-          </button>
-        </div>
-        <div className="p-6">
-          {menuItems.map((section, index) => (
-            <div key={index} className="mb-12 last:mb-0">
-              <h3 className="text-xl font-semibold mb-6 text-accent border-b border-accent/20 pb-2">{section.category}</h3>
-              <div className="space-y-6">
-                {section.items.map((item, itemIndex) => (
-                  <div key={itemIndex} className="flex justify-between gap-4">
-                    <div className="flex-1">
-                      <div className="flex justify-between items-baseline gap-4">
-                        <h4 className="font-medium">{item.name}</h4>
-                        <div className="text-right whitespace-nowrap border-b border-dotted border-text-secondary/30 flex-1"></div>
-                        <div className="text-right whitespace-nowrap font-medium">
-                          ${typeof item.price === 'number' ? item.price.toFixed(2) : item.price}
-                        </div>
-                      </div>
-                      {item.description && (
-                        <p className="text-text-secondary text-sm mt-1 whitespace-pre-line">{item.description}</p>
-                      )}
-                      {item.note && (
-                        <p className="text-accent text-sm mt-1 italic">{item.note}</p>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
+            <div className="flex gap-2 p-2 min-w-max">
+              {menuItems.map((section) => (
+                <button
+                  key={section.category}
+                  data-category={section.category}
+                  onClick={() => scrollToSection(section.category)}
+                  className={`px-4 py-2 rounded-lg whitespace-nowrap transition-colors ${
+                    activeSection === section.category
+                      ? 'bg-accent text-white'
+                      : 'hover:bg-white/10'
+                  }`}
+                >
+                  {section.category}
+                </button>
+              ))}
             </div>
-          ))}
+          </div>
+        </div>
+        <div 
+          ref={contentRef}
+          className="overflow-y-auto flex-1 scroll-smooth"
+        >
+          <div className="p-6">
+            {menuItems.map((section) => (
+              <div
+                key={section.category}
+                id={section.category}
+                ref={(el) => (sectionRefs.current[section.category] = el)}
+                className="mb-12 last:mb-0 scroll-mt-32"
+              >
+                <h3 className="text-xl font-semibold mb-6 text-accent border-b border-accent/20 pb-2">
+                  {section.category}
+                </h3>
+                <div className="space-y-6">
+                  {section.items.map((item, itemIndex) => (
+                    <div key={itemIndex} className="flex justify-between gap-4">
+                      <div className="flex-1">
+                        <div className="flex justify-between items-baseline gap-4">
+                          <h4 className="font-medium">{item.name}</h4>
+                          <div className="text-right whitespace-nowrap border-b border-dotted border-text-secondary/30 flex-1"></div>
+                          <div className="text-right whitespace-nowrap font-medium">
+                            ${typeof item.price === 'number' ? item.price.toFixed(2) : item.price}
+                          </div>
+                        </div>
+                        {item.description && (
+                          <p className="text-text-secondary text-sm mt-1 whitespace-pre-line">
+                            {item.description}
+                          </p>
+                        )}
+                        {item.note && (
+                          <p className="text-accent text-sm mt-1 italic">{item.note}</p>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                {section.note && (
+                  <p className="text-accent text-sm mt-4 italic">{section.note}</p>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
   );
 };
 
-function App() {
+const App = () => {
   const [isReservationExpanded, setIsReservationExpanded] = useState(false);
   const [isMenuDropdownOpen, setIsMenuDropdownOpen] = useState(false);
-  const [activeMenu, setActiveMenu] = useState<'lunch' | 'dinner' | 'brunch' | 'dessert' | 'wine' | null>(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [activeMenu, setActiveMenu] = useState<MenuType>('lunch');
   const reservationRef = useRef<HTMLDivElement>(null);
   const menuDropdownRef = useRef<HTMLDivElement>(null);
+
+  // Organize menu sections into five main categories
+  const allMenuSections: MenuSection[] = [
+    {
+      category: "LUNCH",
+      items: [
+        { name: "SOUP & SALAD", price: "", description: "━━━━━━━━━━━━━━━━━━━━━━" },
+        ...menuData.lunch[0].items,
+        { name: "IN PITA", price: "", description: "━━━━━━━━━━━━━━━━━━━━━━" },
+        ...menuData.lunch[1].items,
+        { name: "STARTERS", price: "", description: "━━━━━━━━━━━━━━━━━━━━━━" },
+        ...menuData.lunch[2].items,
+        { name: "ENTREES", price: "", description: "━━━━━━━━━━━━━━━━━━━━━━" },
+        ...menuData.lunch[3].items,
+        { name: "VEGETARIAN FEAST", price: "", description: "━━━━━━━━━━━━━━━━━━━━━━" },
+        ...menuData.lunch[4].items
+      ]
+    },
+    {
+      category: "DINNER",
+      items: [
+        { name: "IN PITA", price: "", description: "━━━━━━━━━━━━━━━━━━━━━━" },
+        ...menuData.dinner[0].items,
+        { name: "STARTERS", price: "", description: "━━━━━━━━━━━━━━━━━━━━━━" },
+        ...menuData.dinner[1].items,
+        { name: "ENTREES", price: "", description: "━━━━━━━━━━━━━━━━━━━━━━" },
+        ...menuData.dinner[2].items,
+        { name: "VEGETARIAN FEAST", price: "", description: "━━━━━━━━━━━━━━━━━━━━━━" },
+        ...menuData.dinner[3].items
+      ]
+    },
+    {
+      category: "BRUNCH",
+      items: [
+        { name: "BRUNCH SPECIALS", price: "", description: "━━━━━━━━━━━━━━━━━━━━━━" },
+        ...menuData.brunch[0].items,
+        { name: "TURKISH BREAKFAST", price: "", description: "━━━━━━━━━━━━━━━━━━━━━━" },
+        ...menuData.brunch[1].items,
+        { name: "STARTERS", price: "", description: "━━━━━━━━━━━━━━━━━━━━━━" },
+        ...menuData.brunch[3].items,
+        { name: "ENTREES", price: "", description: "━━━━━━━━━━━━━━━━━━━━━━" },
+        ...menuData.brunch[4].items
+      ]
+    },
+    {
+      category: "DESSERT",
+      items: [
+        { name: "DESSERTS", price: "", description: "━━━━━━━━━━━━━━━━━━━━━━" },
+        ...menuData.dessert[0].items,
+        { name: "AFTER DINNER DRINKS", price: "", description: "━━━━━━━━━━━━━━━━━━━━━━" },
+        ...menuData.dessert[1].items
+      ]
+    },
+    {
+      category: "WINE LIST",
+      items: [
+        { name: "WHITE WINES", price: "", description: "━━━━━━━━━━━━━━━━━━━━━━" },
+        ...menuData.wine[0].items,
+        { name: "RED WINES", price: "", description: "━━━━━━━━━━━━━━━━━━━━━━" },
+        ...menuData.wine[1].items,
+        { name: "BEER", price: "", description: "━━━━━━━━━━━━━━━━━━━━━━" },
+        ...menuData.wine[2].items,
+        { name: "MIMOSAS", price: "", description: "━━━━━━━━━━━━━━━━━━━━━━" },
+        ...menuData.wine[3].items,
+        { name: "LOW PROOF COCKTAILS", price: "", description: "━━━━━━━━━━━━━━━━━━━━━━" },
+        ...menuData.wine[4].items,
+        { name: "BEVERAGES", price: "", description: "━━━━━━━━━━━━━━━━━━━━━━" },
+        ...menuData.wine[5].items
+      ],
+      note: "Please ask your server about our seasonal wine selections and daily specials."
+    }
+  ];
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -364,7 +611,7 @@ function App() {
     {
       id: 2,
       name: "Moussaka",
-      description: "Layered eggplant, with a creamy sauce",
+      description: "Layers of eggplant, zucchini, potatoes, tomato sauce, and creamy béchamel.",
       image: "./Images/3.jpg"
     },
     {
@@ -387,7 +634,7 @@ function App() {
               className="object-cover w-full h-full"
             />
             <img 
-              src="./Images/8.jpg" 
+              src="./Images/1.jpg" 
               alt="Restaurant service"
               className="object-cover w-full h-full"
             />
@@ -431,7 +678,7 @@ function App() {
                         rounded text-sm opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none 
                         border border-white/20 whitespace-nowrap">
                         Open in Maps
-                      </span>
+                    </span>
                     </a>
                     <a 
                       href="tel:+14159680696" 
@@ -447,7 +694,7 @@ function App() {
                         rounded text-sm opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none 
                         border border-white/20 whitespace-nowrap">
                         Call AI Host
-                      </span>
+                    </span>
                     </a>
                   </div>
                 </div>
@@ -498,66 +745,13 @@ function App() {
             <div className="mb-8">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-semibold">Menu Highlights</h2>
-                <div ref={menuDropdownRef} className="relative">
-                  <button
-                    onClick={() => setIsMenuDropdownOpen(!isMenuDropdownOpen)}
-                    className="text-accent hover:text-accent/80 flex items-center gap-1 transition-colors group relative"
-                  >
-                    View Full Menu
-                    <ChevronDown className={`w-4 transition-transform ${isMenuDropdownOpen ? 'rotate-180' : ''}`} />
-                  </button>
-                  {isMenuDropdownOpen && (
-                    <div className="absolute right-0 mt-2 w-48 rounded-lg bg-white/10 backdrop-blur-md border border-white/20 shadow-lg overflow-hidden">
-                      <div className="py-1">
-                        <button
-                          onClick={() => {
-                            setActiveMenu('lunch');
-                            setIsMenuDropdownOpen(false);
-                          }}
-                          className="w-full text-left px-4 py-2 text-sm hover:bg-white/10 transition-colors"
-                        >
-                          Lunch Menu
-                        </button>
-                        <button
-                          onClick={() => {
-                            setActiveMenu('dinner');
-                            setIsMenuDropdownOpen(false);
-                          }}
-                          className="w-full text-left px-4 py-2 text-sm hover:bg-white/10 transition-colors"
-                        >
-                          Dinner Menu
-                        </button>
-                        <button
-                          onClick={() => {
-                            setActiveMenu('brunch');
-                            setIsMenuDropdownOpen(false);
-                          }}
-                          className="w-full text-left px-4 py-2 text-sm hover:bg-white/10 transition-colors"
-                        >
-                          Brunch Menu
-                        </button>
-                        <button
-                          onClick={() => {
-                            setActiveMenu('dessert');
-                            setIsMenuDropdownOpen(false);
-                          }}
-                          className="w-full text-left px-4 py-2 text-sm hover:bg-white/10 transition-colors"
-                        >
-                          Dessert Menu
-                        </button>
-                        <button
-                          onClick={() => {
-                            setActiveMenu('wine');
-                            setIsMenuDropdownOpen(false);
-                          }}
-                          className="w-full text-left px-4 py-2 text-sm hover:bg-white/10 transition-colors"
-                        >
-                          Wine List
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
+                <button
+                  onClick={() => setIsMenuOpen(true)}
+                  className="text-accent hover:text-accent/80 flex items-center gap-1 transition-colors"
+                >
+                  View Full Menu
+                  <ChevronRight className="w-4 h-4" />
+                </button>
               </div>
               <div className="grid gap-4">
                 {menuHighlights.map((item) => (
@@ -611,7 +805,7 @@ function App() {
                         <ChevronDown className="w-6 rotate-90" />
                       </button>
                       <h2 className="font-semibold text-white">Reserve a Table</h2>
-                    </div>
+                  </div>
                     <button 
                       onClick={() => setIsReservationExpanded(false)}
                       className="text-white hover:text-white/80 transition-colors hidden lg:block"
@@ -626,7 +820,7 @@ function App() {
                         allowFullScreen={true}
                         className="w-full h-full border-0"
                       />
-                    </div>
+                </div>
                   </div>
                 </div>
               )}
@@ -637,37 +831,12 @@ function App() {
 
       {/* Menu Modals */}
       <MenuModal
-        isOpen={activeMenu === 'lunch'}
-        onClose={() => setActiveMenu(null)}
-        title="Lunch Menu"
-        menuItems={menuData.lunch}
-      />
-      <MenuModal
-        isOpen={activeMenu === 'dinner'}
-        onClose={() => setActiveMenu(null)}
-        title="Dinner Menu"
-        menuItems={menuData.dinner}
-      />
-      <MenuModal
-        isOpen={activeMenu === 'brunch'}
-        onClose={() => setActiveMenu(null)}
-        title="Brunch Menu"
-        menuItems={menuData.brunch}
-      />
-      <MenuModal
-        isOpen={activeMenu === 'dessert'}
-        onClose={() => setActiveMenu(null)}
-        title="Dessert Menu"
-        menuItems={menuData.dessert}
-      />
-      <MenuModal
-        isOpen={activeMenu === 'wine'}
-        onClose={() => setActiveMenu(null)}
-        title="Wine List"
-        menuItems={menuData.wine}
+        isOpen={isMenuOpen}
+        onClose={() => setIsMenuOpen(false)}
+        menuItems={allMenuSections}
       />
     </div>
   );
-}
+};
 
 export default App;
