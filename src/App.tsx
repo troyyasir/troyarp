@@ -442,8 +442,8 @@ const MenuModal: React.FC<MenuModalProps> = ({ isOpen, onClose, menuItems }) => 
                   onClick={() => scrollToSection(section.category)}
                   className={`px-4 py-2 rounded-lg whitespace-nowrap transition-colors ${
                     activeSection === section.category
-                      ? 'bg-accent text-white'
-                      : 'hover:bg-white/10'
+                      ? 'bg-gradient-to-r from-purple-500 to-fuchsia-500 text-white'
+                      : 'hover:bg-purple-500/10'
                   }`}
                 >
                   {section.category}
@@ -464,7 +464,7 @@ const MenuModal: React.FC<MenuModalProps> = ({ isOpen, onClose, menuItems }) => 
                 ref={(el) => (sectionRefs.current[section.category] = el)}
                 className="mb-12 last:mb-0 scroll-mt-32"
               >
-                <h3 className="text-xl font-semibold mb-6 text-accent border-b border-accent/20 pb-2">
+                <h3 className="text-xl font-semibold mb-6 text-purple-300 border-b border-purple-500/20 pb-2">
                   {section.category}
                 </h3>
                 <div className="space-y-6">
@@ -484,14 +484,18 @@ const MenuModal: React.FC<MenuModalProps> = ({ isOpen, onClose, menuItems }) => 
                           </p>
                         )}
                         {item.note && (
-                          <p className="text-accent text-sm mt-1 italic">{item.note}</p>
+                          <p className="text-purple-500 text-sm mt-1 italic">
+                            {item.note}
+                          </p>
                         )}
                       </div>
                     </div>
                   ))}
                 </div>
                 {section.note && (
-                  <p className="text-accent text-sm mt-4 italic">{section.note}</p>
+                  <p className="text-purple-500 text-sm mt-4 italic">
+                    {section.note}
+                  </p>
                 )}
               </div>
             ))}
@@ -605,7 +609,7 @@ const App = () => {
     {
       id: 1,
       name: "Lamb Kebab",
-      description: "Marinated lamb with sumac, served with bulgur pilaf and grilled vegetables",
+      description: "Marinated lamb with sumac, served with rice and grilled vegetables",
       image: "./Images/2.jpg"
     },
     {
@@ -668,15 +672,17 @@ const App = () => {
                       rel="noopener noreferrer"
                       title="Open in Maps"
                       aria-label="Open restaurant location in Maps"
-                      className="flex items-center gap-1 opacity-85 hover:opacity-100 hover:text-accent 
+                      className="flex items-center gap-1 opacity-85 
+                        hover:opacity-100 hover:text-purple-500
                         group relative cursor-pointer px-2 py-1 -mx-2 rounded hover:bg-white/5"
                     >
                       <MapPin className="w-6 min-w-[24px] group-hover:scale-110 transition-transform" />
                       <span className="group-hover:underline">2125 Fillmore Street</span>
                       <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                      <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-white/10 backdrop-blur-md px-2 py-1 
+                      <span className="absolute -top-8 left-1/2 -translate-x-1/2 
+                        bg-purple-500/10 backdrop-blur-md px-2 py-1 
                         rounded text-sm opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none 
-                        border border-white/20 whitespace-nowrap">
+                        border border-purple-500/20 whitespace-nowrap">
                         Open in Maps
                     </span>
                     </a>
@@ -684,15 +690,17 @@ const App = () => {
                       href="tel:+14159680696" 
                       title="Call AI Host"
                       aria-label="Call AI Host"
-                      className="flex items-center gap-1 opacity-85 hover:opacity-100 hover:text-accent 
+                      className="flex items-center gap-1 opacity-85 
+                        hover:opacity-100 hover:text-purple-500
                         group relative cursor-pointer px-2 py-1 -mx-2 rounded hover:bg-white/5"
                     >
                       <Phone className="w-6 min-w-[24px] group-hover:scale-110 transition-transform" />
                       <span className="group-hover:underline">(415) 968-0696</span>
                       <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                      <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-white/10 backdrop-blur-md px-2 py-1 
+                      <span className="absolute -top-8 left-1/2 -translate-x-1/2 
+                        bg-purple-500/10 backdrop-blur-md px-2 py-1 
                         rounded text-sm opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none 
-                        border border-white/20 whitespace-nowrap">
+                        border border-purple-500/20 whitespace-nowrap">
                         Call AI Host
                     </span>
                     </a>
@@ -747,7 +755,7 @@ const App = () => {
                 <h2 className="text-xl font-semibold">Menu Highlights</h2>
                 <button
                   onClick={() => setIsMenuOpen(true)}
-                  className="text-accent hover:text-accent/80 flex items-center gap-1 transition-colors"
+                  className="text-purple-600 hover:text-fuchsia-500 flex items-center gap-1 transition-colors"
                 >
                   View Full Menu
                   <ChevronRight className="w-4 h-4" />
