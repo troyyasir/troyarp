@@ -7,7 +7,10 @@ const menuData = {
     {
       category: "SOUP & SALAD",
       items: [
-        { name: "Red Lentil Soup", description: "with pita, paprika oil, lemon and herbs.", price: 9 }
+        { name: "Red Lentil Soup", description: "with pita, paprika oil, lemon and herbs", price: 9 },
+        { name: "Quinoa Mizuna Salad", description: "radish, kasseri cheese, pistachio, cucumber, raisins, nuts, apple with tahini vinaigrette", price: 16 },
+        { name: "Greek Chicken Salad", description: "lettuce, avocado, cucumber, tomato & feta", price: 18 },
+        { name: "Chickpea Falafel Salad", description: "mix greens, tomato, cucumber, avocado, humus and pita", price: 17, note: "add chicken $6 / braised lamb $7 / salmon skewer $9" }
       ]
     },
     {
@@ -15,10 +18,8 @@ const menuData = {
       items: [
         { name: "Organic Chickpea Falafel", price: 15 },
         { name: "Roasted Chicken", price: 15 },
-        { name: "Quinoa Mizuna Salad", description: "radish, kasseri cheese, pistachio, cucumber, raisins, nuts, apple with tahini vinaigrette", price: 16 },
-        { name: "Braised Lamb Shoulder", price: 17 },
-        { name: "Greek Chicken Salad", description: "lettuce, avocado, cucumber, tomato & feta", price: 18 },
-        { name: "Chickpea Falafel Salad", description: "mix greens, tomato, cucumber, avocado, humus and pita", price: 17, note: "add chicken $6 / braised lamb $7 / salmon skewer $9" }
+        { name: "Vegetable Moussaka with Rice", price: 70 },
+        { name: "Braised Lamb Shoulder", price: 17 }
       ]
     },
     {
@@ -46,48 +47,38 @@ const menuData = {
       items: [
         { 
           name: "Vegetarian Feast for Two", 
-          price: 70,
-          description: "Mezze Plate: Tzatkizi, Hummus, Muhammara, Falafel, Tomato and Cucumber with Pita\nRoasted Cauliflower\nCrispy Spiced Brussels Sprouts with Aioli\nGreek Salad\nVegetable Moussaka with Rice"
+          description: "Mezze Plate: Tzatziki, Hummus, Muhammara, Falafel, Tomato and Cucumber with Pita\nRoasted Cauliflower\nCrispy Spiced Brussels Sprouts with Aioli\nGreek Salad",
+          price: 70
         }
       ]
     }
   ],
   dinner: [
     {
-      category: "SOUP & SALAD",
-      items: [
-        { name: "Red Lentil Soup", description: "with pita, paprika oil, lemon and herbs.", price: 9 }
-      ]
-    },
-    {
-      category: "IN PITA",
-      items: [
-        { name: "Organic Chickpea Falafel", price: 15 },
-        { name: "Roasted Chicken", price: 15 },
-        { name: "Quinoa Mizuna Salad", description: "radish, kasseri cheese, pistachio, cucumber, raisins, nuts, apple with tahini vinaigrette", price: 16 },
-        { name: "Braised Lamb Shoulder", price: 17 },
-        { name: "Greek Chicken Salad", description: "lettuce, avocado, cucumber, tomato & feta", price: 18 },
-        { name: "Chickpea Falafel Salad", description: "mix greens, tomato, cucumber, avocado, humus and pita", price: 17, note: "add chicken $6 / braised lamb $7 / salmon skewer $9" }
-      ]
-    },
-    {
       category: "STARTERS",
       items: [
+        { name: "Red Lentil Soup", description: "with pita, paprika oil, lemon and herbs", price: 9 },
+        { name: "Quinoa Mizuna Salad", description: "radish, kasseri cheese, pistachio, cucumber, raisins, nuts & apple with tahini vinaigrette", price: 16, note: "add chicken $6 / braised lamb $7 / salmon skewer $9" },
         { name: "Crispy Spiced Brussels Sprouts", description: "with aioli on the side", price: 13 },
         { name: "Cheese Borek", description: "with olives", price: 13 },
+        { name: "Chickpea Falafel", description: "with hummus, pita, and pickles, harissa", price: 13 },
         { name: "Roasted Cauliflower", description: "with urfa chili, scallion and tzatziki", price: 15 },
+        { name: "Baked Eggplant", description: "with herb yogurt, dill, almonds and raisins", price: 14 },
         { name: "Warm Hummus w/ Za'atar Spiced Lamb", description: "with pita", price: 17 },
-        { name: "Hummus, Tzatziki, Muhammara", price: 22, note: "Each - $10" },
+        { name: "Hummus, Tzatziki, Muhammara", description: "with pita", price: 22, note: "Each - $10" },
         { name: "Turkish Spiced Fries", description: "with aioli", price: 9 }
       ]
     },
     {
       category: "ENTREES",
       items: [
-        { name: "Chicken Skewers", description: "with rice, grilled shishito, tzatziki and harissa", price: 22 },
-        { name: "Lamb Skewers", description: "with rice, grilled shishito, tzatziki and harissa", price: 24 },
-        { name: "Salmon Skewers", description: "with rice, grilled shishito, tzatziki and harissa", price: 24 },
-        { name: "Braised Lamb Shoulder", description: "with rice, grilled shishito, tzatziki and harissa", price: 24 }
+        { name: "Chicken Skewers", description: "with rice, grilled shishito, tzatziki and harissa", price: 26 },
+        { name: "Lamb Skewers", description: "with rice, grilled shishito, tzatziki and harissa", price: 28 },
+        { name: "Salmon Skewers", description: "with rice, grilled shishito, tzatziki and harissa", price: 29 },
+        { name: "Braised Lamb Shoulder", description: "with almonds, raisins, rice, tzatziki and harissa", price: 26 },
+        { name: "Vegetable Moussaka", description: "with rice", price: 23 },
+        { name: "Manti Turkish Beef Dumplings", description: "with yogurt sauce and paprika oil", price: 23 },
+        { name: "Baby Lamb Chops", description: "with roasted potatoes and warm humus", price: 39 }
       ]
     },
     {
@@ -95,8 +86,8 @@ const menuData = {
       items: [
         { 
           name: "Vegetarian Feast for Two", 
-          price: 70,
-          description: "Mezze Plate: Tzatkizi, Hummus, Muhammara, Falafel, Tomato and Cucumber with Pita\nRoasted Cauliflower\nCrispy Spiced Brussels Sprouts with Aioli\nGreek Salad\nVegetable Moussaka with Rice"
+          description: "Mezze Plate: Tzatziki, Hummus, Muhammara, Falafel, Tomato and Cucumber with Pita\nRoasted Cauliflower\nCrispy Spiced Brussels Sprouts with Aioli\nGreek Salad\nVegetable Moussaka with Rice",
+          price: 70
         }
       ]
     }
@@ -122,15 +113,15 @@ const menuData = {
       items: [
         { 
           name: "Family Style", 
-          price: 60,
-          description: "On Tray:\nmarinated olives, selections of cheese, tomato cucumber salad, fresh fruits, tahini spread, kaymak with honey, labneh parfait, muhammara\n\nMain:\nshakshuka with beef sausage\n\nBread Basket:\nsimit, cheese borek and pita"
+          description: "On Tray:\nmarinated olives, selections of cheese, tomato cucumber salad, fresh fruits, tahini spread, kaymak with honey, labneh parfait, muhammara\n\nMain:\nshakshuka with beef sausage\n\nBread Basket:\nsimit, cheese borek and pita",
+          price: 60
         }
       ]
     },
     {
       category: "SOUP & SALAD",
       items: [
-        { name: "Red Lentil Soup", description: "with pita, paprika oil, lemon and herbs.", price: 9 },
+        { name: "Red Lentil Soup", description: "with pita, paprika oil, lemon and herbs", price: 9 },
         { name: "Quinoa Mizuna Salad", description: "radish, kasseri cheese, pistachio, cucumber, raisins, nuts, apple with tahini vinaigrette", price: 16 },
         { name: "Greek Chicken Salad", description: "lettuce, avocado, cucumber, tomato & feta", price: 18 },
         { name: "Chickpea Falafel Salad", description: "mix greens, tomato, cucumber, avocado, humus and pita", price: 17, note: "add chicken $6 / braised lamb $7 / salmon skewer $9" }
@@ -143,7 +134,7 @@ const menuData = {
         { name: "Cheese Borek", description: "with olives", price: 13 },
         { name: "Roasted Cauliflower", description: "with urfa chili, scallion and tzatziki", price: 15 },
         { name: "Warm Hummus w/ Za'atar Spiced Lamb", description: "with pita", price: 17 },
-        { name: "Hummus, Tzatziki, Muhammara", price: 22, note: "Each - $10" },
+        { name: "Hummus, Tzatziki, Muhammara", description: "with pita", price: 22, note: "Each - $10" },
         { name: "Turkish Spiced Fries", description: "with aioli", price: 9 }
       ]
     },
@@ -217,7 +208,8 @@ const menuData = {
       items: [
         { name: "Pomogranate", price: 13 },
         { name: "Orange", price: 13 },
-        { name: "Rose Bellini", price: 13 },
+        { name: "Rose", price: 13 },
+        { name: "Bellini", price: 13 },
         { name: "Lavender", price: 13 }
       ]
     },
@@ -246,6 +238,18 @@ const menuData = {
         { name: "Herb Tea", price: 3.50 },
         { name: "Coffee", price: 3.50 },
         { name: "OJ (weekends only)", price: 6.50 }
+      ]
+    }
+  ],
+  afterDinner: [
+    {
+      category: "AFTER DINNER DRINKS",
+      items: [
+        { name: "Graham's Tawny Port", price: 12 },
+        { name: "Coffee", price: 3.50 },
+        { name: "Turkish coffee", price: 5 },
+        { name: "Turkish tea (black)", price: 4 },
+        { name: "Herbal Tea", price: 3.50 }
       ]
     }
   ]
@@ -534,14 +538,12 @@ const App = () => {
     {
       category: "DINNER",
       items: [
-        { name: "IN PITA", price: "", description: "━━━━━━━━━━━━━━━━━━━━━━" },
-        ...menuData.dinner[0].items,
         { name: "STARTERS", price: "", description: "━━━━━━━━━━━━━━━━━━━━━━" },
-        ...menuData.dinner[1].items,
+        ...menuData.dinner[0].items,
         { name: "ENTREES", price: "", description: "━━━━━━━━━━━━━━━━━━━━━━" },
-        ...menuData.dinner[2].items,
+        ...menuData.dinner[1].items,
         { name: "VEGETARIAN FEAST", price: "", description: "━━━━━━━━━━━━━━━━━━━━━━" },
-        ...menuData.dinner[3].items
+        ...menuData.dinner[2].items
       ]
     },
     {
@@ -551,6 +553,8 @@ const App = () => {
         ...menuData.brunch[0].items,
         { name: "TURKISH BREAKFAST", price: "", description: "━━━━━━━━━━━━━━━━━━━━━━" },
         ...menuData.brunch[1].items,
+        { name: "SOUP & SALAD", price: "", description: "━━━━━━━━━━━━━━━━━━━━━━" },
+        ...menuData.brunch[2].items,
         { name: "STARTERS", price: "", description: "━━━━━━━━━━━━━━━━━━━━━━" },
         ...menuData.brunch[3].items,
         { name: "ENTREES", price: "", description: "━━━━━━━━━━━━━━━━━━━━━━" },
@@ -563,11 +567,11 @@ const App = () => {
         { name: "DESSERTS", price: "", description: "━━━━━━━━━━━━━━━━━━━━━━" },
         ...menuData.dessert[0].items,
         { name: "AFTER DINNER DRINKS", price: "", description: "━━━━━━━━━━━━━━━━━━━━━━" },
-        ...menuData.dessert[1].items
+        ...menuData.afterDinner[0].items
       ]
     },
     {
-      category: "WINE LIST",
+      category: "DRINKS",
       items: [
         { name: "WHITE WINES", price: "", description: "━━━━━━━━━━━━━━━━━━━━━━" },
         ...menuData.wine[0].items,
@@ -608,21 +612,21 @@ const App = () => {
   const menuHighlights = [
     {
       id: 1,
-      name: "Lamb Kebab",
-      description: "Marinated lamb with sumac, served with rice and grilled vegetables",
+      name: "Lamb Skewers",
+      description: "With rice, grilled shishito, tzatziki and harissa",
       image: "./Images/2.jpg"
     },
     {
       id: 2,
-      name: "Moussaka",
-      description: "Layers of eggplant, zucchini, potatoes, tomato sauce, and creamy béchamel.",
-      image: "./Images/3.jpg"
+      name: "'Manti' Turkish Beef Dumplings",
+      description: "with yogurt sauce and paprika oil",
+      image: "./Images/Manti.jpg"
     },
     {
       id: 3,
-      name: "Vegetarian Feast",
-      description: "Tzatkizi, Hummus, Muhammara, Falafel, Tomato and Cucumber with Pita",
-      image: "./Images/4.jpg"
+      name: "Baked Eggplant",
+      description: "With yogurt sauce and paprika oil ",
+      image: "./Images/Baked Eggplant.png"
     }
   ];
 
